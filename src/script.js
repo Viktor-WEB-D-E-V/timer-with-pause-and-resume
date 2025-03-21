@@ -2,6 +2,7 @@ const refs = {
   clockface: document.querySelector('.clockface'),
   startBtn: document.querySelector('.timer-btn[data-start]'),
   stopBtn: document.querySelector('.timer-btn[data-stop]'),
+  clearBtn: document.querySelector('.timer-btn[data-clear]'),
 };
 
 class Timer {
@@ -25,7 +26,7 @@ class Timer {
     if (this.active) return;
     //Change the state to active
     this.active = true;
-    
+
     this.startTime = Date.now() - this.deltaTime;
     //Refresh markup every 1 sec
     this.timerId = setInterval(() => {
@@ -40,12 +41,21 @@ class Timer {
 
   stop() {
     clearInterval(this.timerId);
-    const time = this.getTimeComponents(this.deltaTime);
-
+    this.timerId = null; 
     this.active = false;
-    this.onTick(time);
+
+    this.onTick(this.getTimeComponents(this.deltaTime));
   }
 
+  clear() {
+    clearInterval(this.timerId);
+    this.timerId = null; 
+    this.active = false;
+    this.startTime = 0;
+    this.deltaTime = 0;
+  
+    this.onTick(this.getTimeComponents());
+  }
   // The methods converts time(milliseconds) to other values, such as hours, minutes and seconds
   getTimeComponents(time = 0) {
     const hours = this.pad(
@@ -63,7 +73,6 @@ class Timer {
 }
 
 const timer = new Timer({
-  //
   onTick: updateTimerInterface,
 });
 
@@ -73,6 +82,9 @@ refs.startBtn.addEventListener('click', () => {
 
 refs.stopBtn.addEventListener('click', () => {
   timer.stop();
+});
+refs.clearBtn.addEventListener('click', () => {
+  timer.clear();
 });
 
 function updateTimerInterface({ hours, mins, secs }) {
