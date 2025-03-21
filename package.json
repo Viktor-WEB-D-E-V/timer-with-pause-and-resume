@@ -1,11 +1,11 @@
 {
-  "name": "countdown-timer-with-pause-and-resume",
+  "name": "timer-with-pause-and-resume",
   "version": "2.0.0",
   "description": "",
-  "homepage": "https://Viktor-WEB-D-E-V.github.io/countdown-timer-with-pause-and-resume",
+  "homepage": "https://Viktor-WEB-D-E-V.github.io/timer-with-pause-and-resume",
   "scripts": {
     "start": "parcel src/*.html",
-    "build": "parcel build src/*.html --public-url /countdown-timer-with-pause-and-resume/",
+    "build": "parcel build src/*.html --public-url /timer-with-pause-and-resume/",
     "deploy": "gh-pages -d dist",
     "predeploy": "npm run build"
   },
