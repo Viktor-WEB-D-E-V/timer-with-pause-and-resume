@@ -9,6 +9,9 @@ class Timer {
     this.timerId = null;
     this.active = false;
 
+    this.startTime = 0;
+    this.deltaTime = 0;
+
     this.onTick = onTick;
     this.init();
   }
@@ -20,15 +23,16 @@ class Timer {
   start() {
     //Prevent multiple timer starts
     if (this.active) return;
-
-    const startTime = Date.now();
     //Change the state to active
     this.active = true;
+    
+    this.startTime = Date.now() - this.deltaTime;
     //Refresh markup every 1 sec
     this.timerId = setInterval(() => {
       const currentTime = Date.now();
-      const deltaTime = currentTime - startTime;
-      const time = this.getTimeComponents(deltaTime);
+
+      this.deltaTime = currentTime - this.startTime;
+      const time = this.getTimeComponents(this.deltaTime);
 
       this.onTick(time);
     }, 1000);
@@ -36,8 +40,9 @@ class Timer {
 
   stop() {
     clearInterval(this.timerId);
+    const time = this.getTimeComponents(this.deltaTime);
+
     this.active = false;
-    const time = this.getTimeComponents();
     this.onTick(time);
   }
 
