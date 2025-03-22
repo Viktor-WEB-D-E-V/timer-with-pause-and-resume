@@ -37,7 +37,7 @@ class Timer {
       this.onTick(this.getTimeComponents(this.deltaTime));
 
       if (this.active) {
-        this.start();
+        this.resumeTimerAfterReload();
       }
     }
   }
@@ -50,12 +50,23 @@ class Timer {
     });
   }
 
+  resumeTimerAfterReload() {
+    this.startTime = Date.now() - this.deltaTime;
+    this.timerId = setInterval(() => {
+      const currentTime = Date.now();
+      this.deltaTime = currentTime - this.startTime;
+
+      this.onTick(this.getTimeComponents(this.deltaTime));
+      this.saveStateToLS();
+    }, 1000);
+  }
+
   start() {
     //Prevent multiple timer starts
     if (this.active) return;
     //Change the state to active
     this.active = true;
-   
+
     this.startTime = Date.now() - this.deltaTime;
     //Save state to localStorage timer start working
     this.saveStateToLS();
