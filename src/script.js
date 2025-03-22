@@ -1,3 +1,7 @@
+import { load, save, remove } from './js/storage';
+
+const TIMER_KEY = 'timer-state';
+
 const refs = {
   clockface: document.querySelector('.clockface'),
   startBtn: document.querySelector('.timer-btn[data-start]'),
@@ -21,6 +25,14 @@ class Timer {
     this.onTick(this.getTimeComponents());
   }
 
+  saveStateToLS() {
+    save(TIMER_KEY, {
+      active: this.active,
+      start: this.startTime,
+      delta: this.deltaTime,
+    });
+  }
+
   start() {
     //Prevent multiple timer starts
     if (this.active) return;
@@ -28,6 +40,9 @@ class Timer {
     this.active = true;
 
     this.startTime = Date.now() - this.deltaTime;
+    //Save state to localStorage timer start working
+    this.saveStateToLS();
+
     //Refresh markup every 1 sec
     this.timerId = setInterval(() => {
       const currentTime = Date.now();
@@ -36,24 +51,27 @@ class Timer {
       const time = this.getTimeComponents(this.deltaTime);
 
       this.onTick(time);
+      //Update state after each tick
+      this.saveStateToLS();
     }, 1000);
   }
 
   stop() {
     clearInterval(this.timerId);
-    this.timerId = null; 
+    this.timerId = null;
     this.active = false;
-
+    //Save to stage localStorage after press stop btn
+    this.saveStateToLS();
     this.onTick(this.getTimeComponents(this.deltaTime));
   }
 
   clear() {
     clearInterval(this.timerId);
-    this.timerId = null; 
+    this.timerId = null;
     this.active = false;
     this.startTime = 0;
     this.deltaTime = 0;
-  
+
     this.onTick(this.getTimeComponents());
   }
   // The methods converts time(milliseconds) to other values, such as hours, minutes and seconds
