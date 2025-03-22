@@ -18,11 +18,28 @@ class Timer {
     this.deltaTime = 0;
 
     this.onTick = onTick;
+
     this.init();
+    this.loadStateFromLS();
   }
   //The method displays a default time
   init() {
     this.onTick(this.getTimeComponents());
+  }
+
+  loadStateFromLS() {
+    const savedState = load(TIMER_KEY);
+    if (savedState) {
+      this.active = savedState.active;
+      this.startTime = savedState.start;
+      this.deltaTime = savedState.delta;
+
+      this.onTick(this.getTimeComponents(this.deltaTime));
+
+      if (this.active) {
+        this.start();
+      }
+    }
   }
 
   saveStateToLS() {
@@ -38,7 +55,7 @@ class Timer {
     if (this.active) return;
     //Change the state to active
     this.active = true;
-
+   
     this.startTime = Date.now() - this.deltaTime;
     //Save state to localStorage timer start working
     this.saveStateToLS();
@@ -71,7 +88,8 @@ class Timer {
     this.active = false;
     this.startTime = 0;
     this.deltaTime = 0;
-
+    //Clear locaStorage;
+    remove(TIMER_KEY);
     this.onTick(this.getTimeComponents());
   }
   // The methods converts time(milliseconds) to other values, such as hours, minutes and seconds
